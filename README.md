@@ -22,3 +22,4 @@ The application’s front end has already been created. It's your job to build t
 
 ## Mock-Up
 - The following images show that the web application appearance
+[![Note-taker.png](https://i.postimg.cc/9QZVMJ39/Note-taker.png)](https://postimg.cc/w1qn45jx)
