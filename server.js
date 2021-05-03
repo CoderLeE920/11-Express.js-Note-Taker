@@ -1,77 +1,54 @@
-const express = require("express");
-const path = require("path");
-const fs = require("fs");
+const express = require('express');
+const fs = require('fs');
+const path = require('path');
+const { v4: uuidv4 } = require("uuid");
+const data = require("./db/db.json");
 
-// creating an "express" server
+// Sets up the Express App
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Express app - parsing data
-app.use(express.urlencoded({extended:true}));
+// Sets up the Express app to handle data parsing
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+//get the css
+app.use(express.static(__dirname + '/public'));
 
-const noteData = require("./Develop/db/db.json"); 
+// HTML Routes
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, './public/index.html')));
 
-app.use(express.static("Develop/public"));
+app.get('/notes', (req, res) => res.sendFile(path.join(__dirname, './public/notes.html')));
 
-//notes.html
-app.get("/notes", function(req, res) {
-  res.sendFile(path.join(__dirname, "Develop\public\notes.html"));
+//API Routes, Displays all notes
+app.get('/api/notes', (req, res) => res.json(data));
+
+// Post a new note
+app.post("/api/notes", (req, res) => {
+    const newnote = req.body;
+    newnote.id = uuidv4();
+    data.push(newnote);
+    fs.writeFile("./db/db.json", JSON.stringify(data), (err) => {
+        if (err) throw err;
+        console.log("New note added");
+    });
+    res.json(newnote);
 });
 
-app.get("/api/notes" , function(req, res) {
-  return res.json(noteData);
-});
-
-app.post("/api/notes", function(req,res) {
-  const newNote = req.body;
-  let maxID = 0;
-  for(const note of noteData) {
-    let currentID = note.id;
-    if (currentID > maxID) {
-      maxID = currentID;
+// Deletes existing notes
+app.delete("/api/notes/:id", (req, res) => {
+    for (index of data) {
+        if (index.id == req.params.id) {
+            const removedIndex = data.indexOf(index);
+            data.splice(removedIndex, 1);
+            fs.writeFile("./db/db.json", JSON.stringify(data), (err) => {
+                if (err) throw err;
+            });
+            console.log("Note deleted");
+        }
     }
-  }
-  newNote.id = maxID + 1;
-  let tempNoteData = noteData;
-  tempNoteData.push(newNote);
-  fs.writeFile("Develop\db\db.json", JSON.stringify(tempNoteData), err => {
-    if(err){
-      console.log(err);
-    } else {
-      console.log("Added new note");
-      console.log(noteData)
-      res.json(newNote);
-    }
-  });
+    res.json();
 });
 
-// Delete a note
-
-app.delete("/api/notes/:id", function(req, res) {
-  const chosenID = req.params.id;
-  let tempDB = noteData;
-  for (let i = 0; i < tempDB.length; i++) {
-    if (chosenID === tempDB[i].id.toString()) {
-      tempDB.splice(i, 1);
-    }
-  }
-  // Rewrite the notes to the 'db.json' file
-  fs.writeFile("./Develop/db/db.json", JSON.stringify(tempDB), err => {
-    if (err) {
-      res.sendStatus(500);
-    } else {
-      console.log(`Deleted id # ${chosenID} from the database.`);
-      console.log(noteData);
-      res.sendStatus(200);
-    }
-  });
-});
-
-
-
-// Start the server on the port
-app.listen(PORT, function() {
-  console.log("server is ok: " + PORT);
-});
+// Starts the server to begin listening
+app.listen(PORT, () => console.log(`App listening on PORT ${PORT}`));
