@@ -1,0 +1,25 @@
+{
+  "name": "11-express.js-note-taker",
+  "version": "1.0.0",
+  "description": "- Your assignment is to modify starter code to create an application called Note Taker that can be used to write and save notes. This application will use an Express.js back end and will save and retrieve note data from a JSON file.\r The application’s front end has already been created. It's your job to build the back end, connect the two, and then deploy the entire application to Heroku.",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.17.1",
+    "install": "^0.13.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CoderLeE920/11-Express.js-Note-Taker.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CoderLeE920/11-Express.js-Note-Taker/issues"
+  },
+  "homepage": "https://github.com/CoderLeE920/11-Express.js-Note-Taker#readme"
+}
